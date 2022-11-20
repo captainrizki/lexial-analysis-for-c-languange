@@ -60,7 +60,7 @@ export function validIdentifier(str: string): boolean {
       str[i] == '7' ||
       str[i] == '8' ||
       str[i] == '9' ||
-      isDelimiter(str[0]) == true
+      isDelimiter(str[i]) == true
     )
       return false;
   }

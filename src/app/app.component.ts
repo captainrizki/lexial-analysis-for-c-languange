@@ -19,7 +19,7 @@ import { fadeInAnimation, titleAnimation } from './animation/my-animation';
 })
 export class AppComponent implements OnInit {
   title: string = 'rizki';
-  inputCode: string = 'int a = 1 + 1';
+  inputCode: string = 'int a = 1 + 1;';
   isClose: boolean = false;
   isFirstAnimation = false;
   isFirstResult = false;
@@ -41,10 +41,11 @@ export class AppComponent implements OnInit {
     }, 1000);
     this.isClose = true;
     this.results = [];
-    const inputCode = this.inputCode;
+    const inputCode = this.inputCode.replace(/\n/g, ' ');
     let right = 0;
     let left = 0;
     let lenInput = this.inputCode.length;
+
     while (right <= lenInput && left <= right) {
       if (isDelimiter(inputCode[right]) == false) right++;
       if (isDelimiter(inputCode[right]) == true && left == right) {
