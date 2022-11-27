@@ -14,3 +14,7 @@ td{
 ::-webkit-scrollbar {
   width: 0px;
 }
+
+#loading{
+  background-color: rgba(0, 0, 0, 0.7);
+}

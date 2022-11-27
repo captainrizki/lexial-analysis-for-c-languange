@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 
 import {
   isDelimiter,
@@ -18,11 +24,13 @@ import { fadeInAnimation, titleAnimation } from './animation/my-animation';
   animations: [fadeInAnimation, titleAnimation],
 })
 export class AppComponent implements OnInit {
+  @ViewChild('result') result!: ElementRef;
   title: string = 'rizki';
   inputCode: string = 'int a = 1 + 1;';
   isClose: boolean = false;
   isFirstAnimation = false;
-  isFirstResult = false;
+  isFirstResult: boolean = false;
+  isLoading: boolean = false;
   results: {
     analysis: string;
     description: string;
@@ -36,60 +44,69 @@ export class AppComponent implements OnInit {
   }
 
   analysisCode() {
-    void setTimeout(() => {
-      this.isFirstResult = true;
-    }, 1000);
-    this.isClose = true;
-    this.results = [];
-    const inputCode = this.inputCode.replace(/\n/g, ' ');
-    let right = 0;
-    let left = 0;
-    let lenInput = this.inputCode.length;
+    this.isClose = false;
+    this.isFirstResult = false;
+    this.isLoading = true;
+    this.result.nativeElement.classList.remove('animate__backInLeft');
 
-    while (right <= lenInput && left <= right) {
-      if (isDelimiter(inputCode[right]) == false) right++;
-      if (isDelimiter(inputCode[right]) == true && left == right) {
-        if (isOperator(inputCode[right]) == true) {
-          this.results.push({
-            analysis: inputCode[right],
-            description: 'Is An Operator',
-          });
+    void setTimeout(() => {
+      void setTimeout(() => {
+        this.isFirstResult = true;
+      }, 1000);
+      this.isClose = true;
+      this.results = [];
+      this.isLoading = false;
+
+      this.result.nativeElement.classList.add('animate__backInLeft');
+      const inputCode = this.inputCode.replace(/\n/g, ' ');
+      let right = 0;
+      let left = 0;
+      let lenInput = this.inputCode.length;
+
+      while (right <= lenInput && left <= right) {
+        if (isDelimiter(inputCode[right]) == false) right++;
+        if (isDelimiter(inputCode[right]) == true && left == right) {
+          if (isOperator(inputCode[right]) == true) {
+            this.results.push({
+              analysis: inputCode[right],
+              description: 'Is An Operator',
+            });
+          }
+          right++;
+          left = right;
+        } else if (
+          (isDelimiter(inputCode[right]) == true && left != right) ||
+          (right == lenInput && left != right)
+        ) {
+          const subStr = subsString(inputCode, left, right);
+          if (isKeyword(subStr) == true)
+            this.results.push({
+              analysis: subStr,
+              description: 'Is An Keyword',
+            });
+          else if (isInteger(subStr) == true)
+            this.results.push({
+              analysis: subStr,
+              description: 'Is An Integer',
+            });
+          else if (isRealNumber(subStr) == true)
+            this.results.push({
+              analysis: subStr,
+              description: 'Is An Real Number',
+            });
+          else if (validIdentifier(subStr) == true)
+            this.results.push({
+              analysis: subStr,
+              description: 'Is A Valid Indentifier',
+            });
+          else if (validIdentifier(subStr) == false)
+            this.results.push({
+              analysis: subStr,
+              description: 'Is Not A Valid Indentifier',
+            });
+          left = right;
         }
-        right++;
-        left = right;
-      } else if (
-        (isDelimiter(inputCode[right]) == true && left != right) ||
-        (right == lenInput && left != right)
-      ) {
-        const subStr = subsString(inputCode, left, right);
-        if (isKeyword(subStr) == true)
-          this.results.push({
-            analysis: subStr,
-            description: 'Is An Keyword',
-          });
-        else if (isInteger(subStr) == true)
-          this.results.push({
-            analysis: subStr,
-            description: 'Is An Integer',
-          });
-        else if (isRealNumber(subStr) == true)
-          this.results.push({
-            analysis: subStr,
-            description: 'Is An Real Number',
-          });
-        else if (validIdentifier(subStr) == true)
-          this.results.push({
-            analysis: subStr,
-            description: 'Is A Valid Indentifier',
-          });
-        else if (validIdentifier(subStr) == false)
-          this.results.push({
-            analysis: subStr,
-            description: 'Is Not A Valid Indentifier',
-          });
-        left = right;
       }
-    }
-    console.log(this.results);
+    }, 3000);
   }
 }

@@ -1,5 +1,6 @@
 @import '~codemirror/lib/codemirror';
 @import '~codemirror/theme/material';
+@import '~animate.css/animate.min';
 
 @tailwind base;
 @tailwind components;
@@ -9,4 +10,7 @@
 body{
   background-color: black;
   color:#6C63FF;
+}
+span {
+  margin-left: 6px;
 }

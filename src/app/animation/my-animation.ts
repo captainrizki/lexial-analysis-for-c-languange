@@ -1,6 +1,5 @@
 import {
   animate,
-  animateChild,
   state,
   style,
   transition,
